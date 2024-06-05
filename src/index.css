@@ -1,7 +1,7 @@
 /* src/index.css */
 
 body {
-  font-family: 'Neutra Text', sans-serif;
+  font-family: "Neutra Text", sans-serif;
 }
 
 table {
@@ -9,7 +9,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ebebeb;
   padding: 8px;
   text-align: left;
@@ -32,7 +33,30 @@ button:disabled {
   cursor: not-allowed;
 }
 
-input[type="text"], select {
+input[type="text"],
+select {
   padding: 8px;
   margin: 5px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-around;
+  background-color: #ebebeb;
+  padding: 10px;
+}
+
+.header button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: #c0e3e5;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.header button:hover {
+  background-color: #0056b3;
 }

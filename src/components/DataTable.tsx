@@ -31,7 +31,7 @@ function DataTable<T extends { [key: string]: any }>({
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filteredLength,setFilteredLength]= useState(0);
+  const [filteredLength, setFilteredLength] = useState(0);
   const searchRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ function DataTable<T extends { [key: string]: any }>({
     setData,
     totalData,
     setTotalData,
-    selectedFilter
+    selectedFilter,
   ]);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -75,13 +75,12 @@ function DataTable<T extends { [key: string]: any }>({
     setSearchQuery(event.target.value.toLowerCase());
   };
 
+  console.log(data.length, "data length");
   const filteredData = data.filter((item) =>
     columns.some((column) =>
       String(item[column.accessor]).toLowerCase().includes(searchQuery)
     )
   );
-
-  
 
   const displayData = filteredData.slice(
     (currentPage - 1) * pageSize,
@@ -97,12 +96,11 @@ function DataTable<T extends { [key: string]: any }>({
     if (searchRef.current) {
       searchRef.current.value = "";
     }
-    setFilteredLength(0)
+    setFilteredLength(0);
     setSelectedFilter(item);
   };
 
   const renderField = () => {
-    console.log(selectedFilter?.type);
     if (selectedFilter?.type === "text") {
       return (
         <>
@@ -113,13 +111,14 @@ function DataTable<T extends { [key: string]: any }>({
         </>
       );
     } else if (selectedFilter?.type === "select") {
-      console.log("select");
       return (
         <select
           ref={searchRef as React.RefObject<HTMLSelectElement>}
-          defaultValue="Select gender"
+          defaultValue={`Select ${selectedFilter.key}`}
         >
-          <option value="Select gender">Select gender</option>
+          <option value={`Select ${selectedFilter.key}`}>
+            Select {selectedFilter.title}
+          </option>
           {selectedFilter?.dropdownValues?.map((item) => (
             <option key={item} value={item}>
               {item}
@@ -137,35 +136,66 @@ function DataTable<T extends { [key: string]: any }>({
     }
   };
   const handleSearchClick = () => {
-    let value = ""
+    let value = "";
     if (selectedFilter?.type === "date" && searchRef.current) {
-        const date = new Date(searchRef.current.value);
-        value = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      } else if (searchRef.current){
-        value = searchRef.current.value;
+      const date = new Date(searchRef.current.value);
+      value = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    } else if (searchRef.current) {
+      value = searchRef.current.value;
+    }
+    if (value == `Select ${selectedFilter?.key}` && searchRef.current) {
+      value = "";
+    }
+    let url = "";
+    if (dataType == "users") {
+      url = `${fetchUrl}/filter?key=${selectedFilter?.key}&value=${value}`;
+    } else {
+      if (selectedFilter?.key == "category") {
+        if (value == "All") {
+          url = fetchUrl;
+        } else {
+          url = `${fetchUrl}/category/laptops`;
+          console.log(url);
+        }
+      } else {
+        url = `${fetchUrl}/search?q=${value}`;
       }
-    if (value == "Select gender" && searchRef.current){
-        value=""
     }
     if (selectedFilter?.key && value) {
-        const url = `${fetchUrl}/filter?key=${selectedFilter.key}&value=${value}`;
-        axios
-        .get(url)
+      axios
+        .get(url, { params: { limit: 0 } })
         .then((response) => {
-            setDataState(response.data[dataType]);
-            setFilteredLength(response.data["total"])
+          if (dataType == "products" && selectedFilter.key != "category") {
+            const filteredProducts = response.data[dataType]
+              .map((item) => {
+                console.log(item[selectedFilter.key]);
+                console.log(value, "value");
+                if (item[selectedFilter.key].includes(value)) {
+                  return item;
+                }
+              })
+              .filter((item) => item !== undefined);
+            setData(filteredProducts);
+            setFilteredLength(filteredProducts.length);
+            setDataState(filteredProducts || []);
+          } else {
+            debugger;
+            setData(response.data[dataType]);
+            setFilteredLength(response.data["total"]);
             setDataState(response.data[dataType] || []);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-            setError("Error fetching data");
-            setLoading(false);
-          });
-      }
+          }
+
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setError("Error fetching data");
+          setLoading(false);
+        });
+    }
     console.log(value, selectedFilter?.key);
   };
-  
+
   const totalPages = filteredLength > 0 ? 1 : Math.ceil(totalData / pageSize);
 
   const pageNumbers = Array.from(
@@ -176,12 +206,16 @@ function DataTable<T extends { [key: string]: any }>({
     <div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
-          {filteredLength<1 ? <select value={pageSize} onChange={handlePageSizeChange}>
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>: `${filteredLength} ` }
+          {filteredLength < 1 ? (
+            <select value={pageSize} onChange={handlePageSizeChange}>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          ) : (
+            `${filteredLength} `
+          )}
           Entries
         </div>
         <div>
