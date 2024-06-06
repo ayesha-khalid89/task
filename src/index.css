@@ -1,5 +1,8 @@
 /* src/index.css */
 
+/* Import Neutra Text font */
+@import url('https://fonts.googleapis.com/css2?family=Neutra+Text:wght@400;700&display=swap');
+
 body {
   font-family: "Neutra Text", sans-serif;
 }
@@ -20,12 +23,17 @@ th {
   background-color: #c0e3e5;
 }
 
+tr:hover {
+  background-color: rgb(243, 239, 239);
+}
+
 button {
   background-color: #fdc936;
   border: none;
   padding: 10px;
   margin: 5px;
   cursor: pointer;
+  font-family: "Neutra Text", sans-serif;
 }
 
 button:disabled {
@@ -37,13 +45,14 @@ input[type="text"],
 select {
   padding: 8px;
   margin: 5px;
+  font-family: "Neutra Text", sans-serif;
 }
 
 .header {
   display: flex;
   justify-content: space-around;
-  background-color: #ebebeb;
-  padding: 10px;
+  background-color: #c0e3e5;
+  margin: 0px;
 }
 
 .header button {
@@ -52,11 +61,157 @@ select {
   cursor: pointer;
   border: none;
   background-color: #c0e3e5;
-  color: white;
+  color: black;
   border-radius: 4px;
   transition: background-color 0.3s;
+  font-family: "Neutra Text", sans-serif;
 }
 
 .header button:hover {
-  background-color: #0056b3;
+  background-color: #fdc936;
+  color: white;
+  border-radius: 16px;
+}
+
+.custom-button {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  align-items: center;
+  transition: background-color 0.3s;
+  border-radius: 16px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.custom-button .arrow-icon {
+  content: '';
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  margin-left: 10px;
+  transform: rotate(45deg);
+  transition: margin-left 0.3s;
+  margin-top: 0px;
+}
+
+.custom-button:hover {
+  background-color: #ebebeb;
+}
+
+.search-icon {
+  border-radius: 16px;
+  padding: 3px;
+}
+
+.search-icon:hover {
+  background-color: #ebebeb;
+}
+
+.search-button {
+  border-radius: 16px;
+  background-color: #fdc936;
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.search-button:hover {
+  border-radius: 16px;
+  background-color: #ebebeb;
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  transform: scale(1.01);
+}
+
+.select-entries {
+  border-radius: 16px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.select-entries:hover {
+  background-color: #ebebeb;
+}
+
+.section-filter {
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.search-input-field {
+  border-radius: 16px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.filter-input-field {
+  padding: 8px;
+  border-radius: 8px;
+  border-width: 0.5px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.filter-date-field {
+  padding: 8px;
+  border-radius: 8px;
+  border-width: 0.5px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.filter-select-field {
+  padding: 8px;
+  border-radius: 8px;
+  border-width: 0.5px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+/* pagination css */
+
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.pagination-button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: #c0e3e5;
+  border: none;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: background-color 0.3s, transform 0.3s;
+  font-family: "Neutra Text", sans-serif;
+}
+
+.pagination-button.active {
+  background-color: #fdc936;
+  border-radius: 16px;
+}
+
+.pagination-button:hover {
+  background-color: #ebebeb;
+  transform: scale(1.1);
+}
+
+.pagination-button.prev, .pagination-button.next {
+  font-size: 18px;
+  padding: 5px 10px;
+  background-color: transparent;
+  border-radius: 16px;
+}
+
+.pagination-button.prev:hover, .pagination-button.next:hover {
+  background-color: #ebebeb;
+}
+
+.pagination-button:disabled {
+  cursor: default;
+  background-color: transparent;
+  color: #000;
 }

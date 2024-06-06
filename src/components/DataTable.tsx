@@ -75,7 +75,6 @@ function DataTable<T extends { [key: string]: any }>({
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  console.log(data.length, "data length");
   const filteredData = data.filter((item) =>
     columns.some((column) =>
       String(item[column.accessor]).toLowerCase().includes(searchQuery)
@@ -105,14 +104,16 @@ function DataTable<T extends { [key: string]: any }>({
       return (
         <>
           <input
+            className="filter-input-field"
             placeholder={`Enter ${selectedFilter.title}...`}
             ref={searchRef as React.RefObject<HTMLInputElement>}
-          ></input>
+          />
         </>
       );
     } else if (selectedFilter?.type === "select") {
       return (
         <select
+          className="filter-select-field"
           ref={searchRef as React.RefObject<HTMLSelectElement>}
           defaultValue={`Select ${selectedFilter.key}`}
         >
@@ -129,6 +130,7 @@ function DataTable<T extends { [key: string]: any }>({
     } else if (selectedFilter?.type === "date") {
       return (
         <input
+          className="filter-date-field"
           ref={searchRef as React.RefObject<HTMLInputElement>}
           type="date"
         />
@@ -143,19 +145,18 @@ function DataTable<T extends { [key: string]: any }>({
     } else if (searchRef.current) {
       value = searchRef.current.value;
     }
-    if (value == `Select ${selectedFilter?.key}` && searchRef.current) {
+    if (value === `Select ${selectedFilter?.key}` && searchRef.current) {
       value = "";
     }
     let url = "";
-    if (dataType == "users") {
+    if (dataType === "users") {
       url = `${fetchUrl}/filter?key=${selectedFilter?.key}&value=${value}`;
     } else {
-      if (selectedFilter?.key == "category") {
-        if (value == "All") {
+      if (selectedFilter?.key === "category") {
+        if (value === "All") {
           url = fetchUrl;
         } else {
           url = `${fetchUrl}/category/laptops`;
-          console.log(url);
         }
       } else {
         url = `${fetchUrl}/search?q=${value}`;
@@ -163,13 +164,16 @@ function DataTable<T extends { [key: string]: any }>({
     }
     if (selectedFilter?.key && value) {
       axios
-        .get(url, { params: { limit: 0 } })
+        .get(url, {
+          params: {
+            limit: pageSize,
+            skip: (currentPage - 1) * pageSize,
+          },
+        })
         .then((response) => {
-          if (dataType == "products" && selectedFilter.key != "category") {
+          if (dataType === "products" && selectedFilter.key !== "category") {
             const filteredProducts = response.data[dataType]
               .map((item) => {
-                console.log(item[selectedFilter.key]);
-                console.log(value, "value");
                 if (item[selectedFilter.key].includes(value)) {
                   return item;
                 }
@@ -179,7 +183,6 @@ function DataTable<T extends { [key: string]: any }>({
             setFilteredLength(filteredProducts.length);
             setDataState(filteredProducts || []);
           } else {
-            debugger;
             setData(response.data[dataType]);
             setFilteredLength(response.data["total"]);
             setDataState(response.data[dataType] || []);
@@ -193,7 +196,6 @@ function DataTable<T extends { [key: string]: any }>({
           setLoading(false);
         });
     }
-    console.log(value, selectedFilter?.key);
   };
 
   const totalPages = filteredLength > 0 ? 1 : Math.ceil(totalData / pageSize);
@@ -202,12 +204,59 @@ function DataTable<T extends { [key: string]: any }>({
     { length: totalPages },
     (_, index) => index + 1
   );
+
+  const getPageNumbers = () => {
+    const totalNumbers = 5;
+    const totalBlocks = totalNumbers + 2;
+    if (pageNumbers.length > totalBlocks) {
+      const startPage = Math.max(2, currentPage - 2);
+      const endPage = Math.min(pageNumbers.length - 1, currentPage + 2);
+      let pages: any[] = pageNumbers.slice(startPage - 1, endPage);
+
+      const hasLeftSpill = startPage > 2;
+      const hasRightSpill = pageNumbers.length - endPage > 1;
+      const spillOffset = totalNumbers - (pages.length + 1);
+
+      switch (true) {
+        case hasLeftSpill && !hasRightSpill: {
+          const extraPages = Array.from(
+            { length: spillOffset },
+            (_, i) => startPage - spillOffset + i
+          );
+          pages = ["...", ...extraPages, ...pages];
+          break;
+        }
+        case !hasLeftSpill && hasRightSpill: {
+          const extraPages = Array.from(
+            { length: spillOffset },
+            (_, i) => endPage + i + 1
+          );
+          pages = [...pages, ...extraPages, "..."];
+          break;
+        }
+        case hasLeftSpill && hasRightSpill:
+        default: {
+          pages = ["...", ...pages, "..."];
+          break;
+        }
+      }
+
+      return [1, ...pages, pageNumbers.length];
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="section-filter">
         <div>
           {filteredLength < 1 ? (
-            <select value={pageSize} onChange={handlePageSizeChange}>
+            <select
+              className="select-entries"
+              value={pageSize}
+              onChange={handlePageSizeChange}
+            >
               <option value={5}>5</option>
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -219,17 +268,10 @@ function DataTable<T extends { [key: string]: any }>({
           Entries
         </div>
         <div>
-          {filterKeys.map((item) => (
-            <button onClick={(e) => handleFilterClick(item)}>
-              {item.title}
-            </button>
-          ))}
-        </div>
-
-        <div>
           {inputEnabled ? (
             <>
               <input
+                className="search-input-field"
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
@@ -238,19 +280,35 @@ function DataTable<T extends { [key: string]: any }>({
               <MdCancel onClick={handleDeleteSearch} />
             </>
           ) : (
-            <CiSearch
-              onClick={() => {
-                setInputEnabled(true);
-              }}
-            />
+            <div style={{ marginTop: 8 }}>
+              <CiSearch
+                className="search-icon"
+                size={24}
+                onClick={() => {
+                  setInputEnabled(true);
+                }}
+              />
+            </div>
           )}
+        </div>
+        <div>
+          {filterKeys.map((item) => (
+            <button
+              className="custom-button"
+              onClick={(e) => handleFilterClick(item)}
+            >
+              {item.title} <span className="arrow-icon"></span>
+            </button>
+          ))}
         </div>
       </div>
       <div>
         {selectedFilter && (
           <>
             {renderField()}
-            <button onClick={handleSearchClick}>Search</button>
+            <button className="search-button" onClick={handleSearchClick}>
+              Search
+            </button>
           </>
         )}
       </div>
@@ -280,40 +338,38 @@ function DataTable<T extends { [key: string]: any }>({
               ))}
             </tbody>
           </table>
-          <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <div className="pagination">
             <button
+              className="pagination-button prev"
               onClick={() =>
                 currentPage > 1
                   ? setCurrentPage(currentPage - 1)
                   : setCurrentPage(currentPage)
               }
             >
-              Prev
+              &larr;
             </button>
-            {pageNumbers.map((number) => (
+            {getPageNumbers().map((number, index) => (
               <button
-                key={number}
+                key={index}
+                className={`pagination-button ${
+                  number === currentPage ? "active" : ""
+                }`}
                 onClick={() => setCurrentPage(number)}
-                style={{
-                  margin: "0 5px",
-                  padding: "5px 10px",
-                  backgroundColor:
-                    number === currentPage ? "#fdc936" : "#c0e3e5",
-                  border: "none",
-                  cursor: "pointer",
-                }}
+                disabled={number === "..."}
               >
                 {number}
               </button>
             ))}
             <button
+              className="pagination-button next"
               onClick={() =>
                 currentPage < pageNumbers.length
                   ? setCurrentPage(currentPage + 1)
                   : setCurrentPage(currentPage)
               }
             >
-              Next
+              &rarr;
             </button>
           </div>
         </>
