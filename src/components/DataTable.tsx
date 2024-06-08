@@ -78,44 +78,53 @@ function DataTable<T extends { [key: string]: any }>({
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const url = generateUrl();
-        const { data } = await axios.get(url, {
-          params: {
-            limit: pageSize,
-            skip: (currentPage - 1) * pageSize,
-          },
-        });
-
-        let resultData = data[dataType];
+    const url = generateUrl();
+    axios
+      .get(url, {
+        params: {
+          limit: pageSize,
+          skip: (currentPage - 1) * pageSize,
+        },
+      })
+      .then((response) => {
         if (
           selectedFilter?.key &&
           searchRef?.current?.value &&
           dataType === "products" &&
           selectedFilter?.key !== "category"
         ) {
-          resultData = resultData.filter((item) =>
-            item[selectedFilter.key]?.includes(searchRef?.current?.value)
-          );
+          const filteredProducts = response.data[dataType]
+            .map((item) => {
+              if (
+                selectedFilter?.key &&
+                item[selectedFilter?.key] &&
+                item[selectedFilter?.key].includes(searchRef.current?.value)
+              ) {
+                return item;
+              }
+            })
+            .filter((item) => item !== undefined);
+          setData(filteredProducts);
+          setTotalData(filteredProducts.length);
+        } else {
+          setData(response.data[dataType]);
+          setTotalData(response.data["total"]);
         }
-        setData(resultData);
-        setTotalData(dataType === "products" ? resultData.length : data.total);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Error fetching data");
-      } finally {
         setSearchClicked(false);
         setLoading(false);
-      }
-    };
-
-    fetchData();
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setError("Error fetching data");
+        setLoading(false);
+      });
   }, [
     currentPage,
     pageSize,
     dataType,
+    setData,
+    totalData,
+    setTotalData,
     selectedFilter,
     searchClicked,
     setData,
