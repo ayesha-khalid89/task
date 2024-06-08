@@ -256,8 +256,8 @@ function DataTable<T extends { [key: string]: any }>({
     return pageNumbers;
   };
 
-  return (
-    <div>
+  const renderHeader = () => {
+    return (
       <div className="header">
         <Link to="/users">
           <button
@@ -281,129 +281,153 @@ function DataTable<T extends { [key: string]: any }>({
           </button>
         </Link>
       </div>
-      <h2>{dataType.toUpperCase()}</h2>
-      <div className="section-filter">
-        <div>
-          <select
-            className="select-entries"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>
-          Entries
+    );
+  };
+  const renderFilterSection = () => {
+    return (
+      <>
+        <div className="section-filter">
+          <div>
+            <select
+              className="select-entries"
+              value={pageSize}
+              onChange={handlePageSizeChange}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+            Entries
+          </div>
+          <div>
+            {inputEnabled ? (
+              <>
+                <input
+                  className="search-input-field"
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={handleSearch}
+                />
+                <MdCancel onClick={handleDeleteSearch} />
+              </>
+            ) : (
+              <div style={{ marginTop: 8 }}>
+                <CiSearch
+                  className="search-icon"
+                  size={24}
+                  onClick={() => {
+                    setInputEnabled(true);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <div>
+            {filterKeys.map((item) => (
+              <button
+                className={`custom-button ${
+                  activeFilter === item.title ? "active" : ""
+                }`}
+                onClick={(e) => handleFilterClick(item)}
+              >
+                {item.title} <span className="arrow-icon"></span>
+              </button>
+            ))}
+          </div>
         </div>
         <div>
-          {inputEnabled ? (
+          {selectedFilter && (
             <>
-              <input
-                className="search-input-field"
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={handleSearch}
-              />
-              <MdCancel onClick={handleDeleteSearch} />
+              {renderField()}
+              <button className="search-button" onClick={handleSearchClick}>
+                Search
+              </button>
+              <MdCancel onClick={handleDeleteFilter} />
             </>
-          ) : (
-            <div style={{ marginTop: 8 }}>
-              <CiSearch
-                className="search-icon"
-                size={24}
-                onClick={() => {
-                  setInputEnabled(true);
-                }}
-              />
-            </div>
           )}
         </div>
-        <div>
-          {filterKeys.map((item) => (
-            <button
-              className={`custom-button ${
-                activeFilter === item.title ? "active" : ""
-              }`}
-              onClick={(e) => handleFilterClick(item)}
-            >
-              {item.title} <span className="arrow-icon"></span>
-            </button>
-          ))}
-        </div>
+      </>
+    );
+  };
+  const renderDatatable = () => {
+    return (
+      <>
+        <table>
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th key={String(column.header)}>{column.header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column) => (
+                  <td key={String(column.header)}>
+                    {String(row[column.accessor])}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    );
+  };
+  const renderPagination = () => {
+    return (
+      <div className="pagination">
+        <button
+          className="pagination-button prev"
+          onClick={() =>
+            currentPage > 1
+              ? setCurrentPage(currentPage - 1)
+              : setCurrentPage(currentPage)
+          }
+        >
+          &larr;
+        </button>
+        {getPageNumbers().map((number, index) => (
+          <button
+            key={index}
+            className={`pagination-button ${
+              number === currentPage ? "active" : ""
+            }`}
+            onClick={() => setCurrentPage(number)}
+            disabled={number === "..."}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          className="pagination-button next"
+          onClick={() =>
+            currentPage < pageNumbers.length
+              ? setCurrentPage(currentPage + 1)
+              : setCurrentPage(currentPage)
+          }
+        >
+          &rarr;
+        </button>
       </div>
-      <div>
-        {selectedFilter && (
-          <>
-            {renderField()}
-            <button className="search-button" onClick={handleSearchClick}>
-              Search
-            </button>
-            <MdCancel onClick={handleDeleteFilter} />
-          </>
-        )}
-      </div>
+    );
+  };
+  return (
+    <div>
+      {renderHeader()}
+      <h2>{dataType.toUpperCase()}</h2>
+      {renderFilterSection()}
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>{error}</p>
       ) : (
         <>
-          <table>
-            <thead>
-              <tr>
-                {columns.map((column) => (
-                  <th key={String(column.header)}>{column.header}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {columns.map((column) => (
-                    <td key={String(column.header)}>
-                      {String(row[column.accessor])}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="pagination">
-            <button
-              className="pagination-button prev"
-              onClick={() =>
-                currentPage > 1
-                  ? setCurrentPage(currentPage - 1)
-                  : setCurrentPage(currentPage)
-              }
-            >
-              &larr;
-            </button>
-            {getPageNumbers().map((number, index) => (
-              <button
-                key={index}
-                className={`pagination-button ${
-                  number === currentPage ? "active" : ""
-                }`}
-                onClick={() => setCurrentPage(number)}
-                disabled={number === "..."}
-              >
-                {number}
-              </button>
-            ))}
-            <button
-              className="pagination-button next"
-              onClick={() =>
-                currentPage < pageNumbers.length
-                  ? setCurrentPage(currentPage + 1)
-                  : setCurrentPage(currentPage)
-              }
-            >
-              &rarr;
-            </button>
-          </div>
+          {renderDatatable()}
+          {renderPagination()}
         </>
       )}
     </div>
