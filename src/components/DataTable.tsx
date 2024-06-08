@@ -74,57 +74,53 @@ function DataTable<T extends { [key: string]: any }>({
   };
 
   useEffect(() => {
-    const url = generateUrl();
-    axios
-      .get(url, {
-        params: {
-          limit: pageSize,
-          skip: (currentPage - 1) * pageSize,
-        },
-      })
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const url = generateUrl();
+        const { data } = await axios.get(url, {
+          params: {
+            limit: pageSize,
+            skip: (currentPage - 1) * pageSize,
+          },
+        });
+
+        let resultData = data[dataType];
         if (
           selectedFilter?.key &&
           searchRef?.current?.value &&
           dataType === "products" &&
           selectedFilter?.key !== "category"
         ) {
-          const filteredProducts = response.data[dataType]
-            .map((item) => {
-              if (
-                selectedFilter?.key &&
-                item[selectedFilter?.key] &&
-                item[selectedFilter?.key].includes(searchRef.current?.value)
-              ) {
-                return item;
-              }
-            })
-            .filter((item) => item !== undefined);
-          setData(filteredProducts);
-          setTotalData(filteredProducts.length);
-          setDataState(filteredProducts || []);
-        } else {
-          setData(response.data[dataType]);
-          setTotalData(response.data["total"]);
-          setDataState(response.data[dataType] || []);
+          resultData = resultData.filter((item) =>
+            item[selectedFilter.key]?.includes(searchRef?.current?.value)
+          );
         }
-        setSearchClicked(false);
-        setLoading(false);
-      })
-      .catch((error) => {
+        setData(resultData);
+        setTotalData(dataType === "products" ? resultData.length : data.total);
+        setDataState(resultData || []);
+      } catch (error) {
         console.error("Error fetching data:", error);
         setError("Error fetching data");
+      } finally {
+        setSearchClicked(false);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [
     currentPage,
     pageSize,
     dataType,
-    setData,
-    totalData,
-    setTotalData,
     selectedFilter,
     searchClicked,
+    setData,
+    setTotalData,
+    setSearchClicked,
+    setLoading,
+    setError,
+    setDataState,
   ]);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
