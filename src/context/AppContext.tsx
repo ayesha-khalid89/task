@@ -1,37 +1,6 @@
 // src/context/AppContext.tsx
 import React, { createContext, useState, ReactNode } from "react";
-
-interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  maidenName: string;
-  birthDate: string;
-  gender: string;
-  email: string;
-  phone: string;
-  image: string;
-  username: string;
-  password: string;
-  height: string;
-  bloodGroup: string;
-  eyeColor: string;
-}
-
-interface Product {
-  id: number;
-    title: string;
-    brand: string;
-    category: string;
-    price: number;
-    discountPercentage:number;
-    rating:number;
-    stock:number;
-    weight:number;
-    warrantyInformation:string;
-    availabilityStatus:string;
-    shippingInformation:string;
-}
+import { User, Product } from "../utils/interface";
 
 interface AppContextProps {
   users: User[];
