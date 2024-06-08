@@ -42,7 +42,6 @@ function DataTable<T extends { [key: string]: any }>({
       searchRef.current?.value &&
       !searchRef.current?.value.includes("Select ")
     ) {
-      console.log(searchRef.current.value);
       let value = "";
       if (selectedFilter?.type === "date" && searchRef.current) {
         const date = new Date(searchRef.current.value);
@@ -74,7 +73,6 @@ function DataTable<T extends { [key: string]: any }>({
 
   useEffect(() => {
     const url = generateUrl();
-    console.log(url);
     axios
       .get(url, {
         params: {
