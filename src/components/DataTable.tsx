@@ -39,31 +39,32 @@ function DataTable<T extends { [key: string]: any }>({
 
   const generateUrl = () => {
     let url = fetchUrl;
-    if (
-      searchRef.current?.value &&
-      !searchRef.current?.value.includes("Select ")
-    ) {
+
+    const searchValue = searchRef.current?.value;
+    const selectedKey = selectedFilter?.key;
+    const selectedType = selectedFilter?.type;
+
+    if (searchValue && !searchValue.includes("Select ")) {
       let value = "";
-      if (selectedFilter?.type === "date" && searchRef.current) {
-        const date = new Date(searchRef.current.value);
+
+      if (selectedType === "date" && searchValue) {
+        const date = new Date(searchValue);
         value = `${date.getFullYear()}-${
           date.getMonth() + 1
         }-${date.getDate()}`;
-      } else if (searchRef.current) {
-        value = searchRef.current.value;
+      } else {
+        value = searchValue;
       }
-      if (value === `Select ${selectedFilter?.key}` && searchRef.current) {
+
+      if (value === `Select ${selectedKey}`) {
         value = "";
       }
+
       if (dataType === "users") {
-        url = `${fetchUrl}/filter?key=${selectedFilter?.key}&value=${value}`;
+        url = `${fetchUrl}/filter?key=${selectedKey}&value=${value}`;
       } else {
-        if (selectedFilter?.key === "category") {
-          if (value === "All") {
-            url = fetchUrl;
-          } else {
-            url = `${fetchUrl}/category/laptops`;
-          }
+        if (selectedKey === "category") {
+          url = value === "All" ? fetchUrl : `${fetchUrl}/category/laptops`;
         } else {
           url = `${fetchUrl}/search?q=${value}`;
         }
