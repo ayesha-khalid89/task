@@ -164,45 +164,6 @@ function DataTable<T extends { [key: string]: any }>({
     setSelectedFilter(item);
   };
 
-  const renderField = () => {
-    if (selectedFilter?.type === "text") {
-      return (
-        <>
-          <input
-            className="filter-input-field"
-            placeholder={`Enter ${selectedFilter.title}...`}
-            ref={searchRef as React.RefObject<HTMLInputElement>}
-          />
-        </>
-      );
-    } else if (selectedFilter?.type === "select") {
-      return (
-        <select
-          className="filter-select-field"
-          ref={searchRef as React.RefObject<HTMLSelectElement>}
-          defaultValue={`Select ${selectedFilter.key}`}
-        >
-          <option value={`Select ${selectedFilter.key}`}>
-            Select {selectedFilter.title}
-          </option>
-          {selectedFilter?.dropdownValues?.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-      );
-    } else if (selectedFilter?.type === "date") {
-      return (
-        <input
-          className="filter-date-field"
-          ref={searchRef as React.RefObject<HTMLInputElement>}
-          type="date"
-        />
-      );
-    }
-  };
-
   const handleSearchClick = () => {
     setSearchClicked(true);
   };
@@ -256,6 +217,44 @@ function DataTable<T extends { [key: string]: any }>({
     return pageNumbers;
   };
 
+  const renderField = () => {
+    if (selectedFilter?.type === "text") {
+      return (
+        <>
+          <input
+            className="filter-input-field"
+            placeholder={`Enter ${selectedFilter.title}...`}
+            ref={searchRef as React.RefObject<HTMLInputElement>}
+          />
+        </>
+      );
+    } else if (selectedFilter?.type === "select") {
+      return (
+        <select
+          className="filter-select-field"
+          ref={searchRef as React.RefObject<HTMLSelectElement>}
+          defaultValue={`Select ${selectedFilter.key}`}
+        >
+          <option value={`Select ${selectedFilter.key}`}>
+            Select {selectedFilter.title}
+          </option>
+          {selectedFilter?.dropdownValues?.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      );
+    } else if (selectedFilter?.type === "date") {
+      return (
+        <input
+          className="filter-date-field"
+          ref={searchRef as React.RefObject<HTMLInputElement>}
+          type="date"
+        />
+      );
+    }
+  };
   const renderHeader = () => {
     return (
       <div className="header">
