@@ -10,25 +10,29 @@ interface DataTableProps<T> {
   fetchUrl: string;
   dataType: string;
   setData: React.Dispatch<React.SetStateAction<T[]>>;
+  data: T[];
   setTotalData: React.Dispatch<React.SetStateAction<number>>;
   totalData: number;
   filterKeys: IFilterKeys[];
+  pageSize: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function DataTable<T extends { [key: string]: any }>({
   columns,
   fetchUrl,
   dataType,
+  data,
   setData,
   totalData,
   setTotalData,
   filterKeys,
+  pageSize,
+  setPageSize,
 }: DataTableProps<T>) {
   const [selectedFilter, setSelectedFilter] = useState<IFilterKeys>();
   const [inputEnabled, setInputEnabled] = useState(false);
-  const [data, setDataState] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +102,6 @@ function DataTable<T extends { [key: string]: any }>({
         }
         setData(resultData);
         setTotalData(dataType === "products" ? resultData.length : data.total);
-        setDataState(resultData || []);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Error fetching data");
@@ -120,7 +123,6 @@ function DataTable<T extends { [key: string]: any }>({
     setSearchClicked,
     setLoading,
     setError,
-    setDataState,
   ]);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {

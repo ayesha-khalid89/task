@@ -6,8 +6,14 @@ import { User } from "../types.ts";
 import { IFilterKeys } from "../utils/interface.ts";
 
 const Users: React.FC = () => {
-  const { users, setUsers, totalUsers, setTotalUsers } =
-    useContext(AppContext)!;
+  const {
+    users,
+    setUsers,
+    totalUsers,
+    setTotalUsers,
+    userPageSize,
+    setUserPageSize,
+  } = useContext(AppContext)!;
 
   const columns: { header: string; accessor: keyof User }[] = [
     { header: "ID", accessor: "id" },
@@ -43,9 +49,12 @@ const Users: React.FC = () => {
         fetchUrl="https://dummyjson.com/users"
         dataType="users"
         setData={setUsers}
+        data={users}
         setTotalData={setTotalUsers}
         totalData={totalUsers}
         filterKeys={filterKeys}
+        pageSize={userPageSize}
+        setPageSize={setUserPageSize}
       />
     </div>
   );

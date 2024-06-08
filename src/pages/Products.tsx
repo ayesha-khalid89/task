@@ -6,8 +6,14 @@ import { Product } from "../types.ts"; // Import the Product type
 import { IFilterKeys } from "../utils/interface.ts";
 
 const Products: React.FC = () => {
-  const { products, totalProducts, setProducts, setTotalProducts } =
-    useContext(AppContext)!;
+  const {
+    products,
+    totalProducts,
+    setProducts,
+    setTotalProducts,
+    productPageSize,
+    setProductPageSize,
+  } = useContext(AppContext)!;
 
   const columns: { header: string; accessor: keyof Product }[] = [
     { header: "ID", accessor: "id" },
@@ -42,9 +48,12 @@ const Products: React.FC = () => {
         fetchUrl="https://dummyjson.com/products"
         dataType="products"
         totalData={totalProducts}
+        data={products}
         setTotalData={setTotalProducts}
         setData={setProducts}
         filterKeys={filterKeys}
+        pageSize={productPageSize}
+        setPageSize={setProductPageSize}
       />
     </div>
   );
