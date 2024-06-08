@@ -1,7 +1,7 @@
 /* src/index.css */
 
 /* Import Neutra Text font */
-@import url('https://fonts.googleapis.com/css2?family=Neutra+Text:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Neutra+Text:wght@400;700&display=swap");
 
 body {
   font-family: "Neutra Text", sans-serif;
@@ -85,7 +85,7 @@ select {
 }
 
 .custom-button .arrow-icon {
-  content: '';
+  content: "";
   border: solid black;
   border-width: 0 2px 2px 0;
   display: inline-block;
@@ -97,6 +97,10 @@ select {
 }
 
 .custom-button:hover {
+  background-color: #ebebeb;
+}
+
+.custom-button.active {
   background-color: #ebebeb;
 }
 
@@ -199,14 +203,16 @@ select {
   transform: scale(1.1);
 }
 
-.pagination-button.prev, .pagination-button.next {
+.pagination-button.prev,
+.pagination-button.next {
   font-size: 18px;
   padding: 5px 10px;
   background-color: transparent;
   border-radius: 16px;
 }
 
-.pagination-button.prev:hover, .pagination-button.next:hover {
+.pagination-button.prev:hover,
+.pagination-button.next:hover {
   background-color: #ebebeb;
 }
 

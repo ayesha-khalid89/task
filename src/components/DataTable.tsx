@@ -35,6 +35,7 @@ function DataTable<T extends { [key: string]: any }>({
   const [filteredLength, setFilteredLength] = useState(0);
   const [searchClicked, setSearchClicked] = useState(false);
   const searchRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const generateUrl = () => {
     let url = fetchUrl;
@@ -140,17 +141,13 @@ function DataTable<T extends { [key: string]: any }>({
     )
   );
 
-  const displayData = filteredData.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
   const handleDeleteSearch = () => {
     setInputEnabled(false);
     setSearchQuery("");
   };
 
   const handleDeleteFilter = () => {
+    setActiveFilter(null);
     setSelectedFilter(undefined);
     setFilteredLength(0);
     if (searchRef.current) {
@@ -159,6 +156,7 @@ function DataTable<T extends { [key: string]: any }>({
   };
 
   const handleFilterClick = (item: IFilterKeys) => {
+    setActiveFilter(item.title);
     if (searchRef.current) {
       searchRef.current.value = "";
     }
@@ -266,6 +264,7 @@ function DataTable<T extends { [key: string]: any }>({
             onClick={() => {
               setCurrentPage(1);
               setSelectedFilter(undefined);
+              setActiveFilter(null);
             }}
           >
             Users
@@ -324,7 +323,9 @@ function DataTable<T extends { [key: string]: any }>({
         <div>
           {filterKeys.map((item) => (
             <button
-              className="custom-button"
+              className={`custom-button ${
+                activeFilter === item.title ? "active" : ""
+              }`}
               onClick={(e) => handleFilterClick(item)}
             >
               {item.title} <span className="arrow-icon"></span>
