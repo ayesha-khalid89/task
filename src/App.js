@@ -2,7 +2,6 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Users from "./pages/Users.tsx";
 import Products from "./pages/Products.tsx";
-import Header from "./components/Header.tsx";
 
 function App() {
   return (

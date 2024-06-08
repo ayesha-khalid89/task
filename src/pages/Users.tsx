@@ -2,7 +2,7 @@
 import React, { useContext } from "react";
 import DataTable from "../components/DataTable.tsx";
 import { AppContext } from "../context/AppContext.tsx";
-import { User } from "../types.ts";
+import { User } from "../utils/interface.ts";
 import { IFilterKeys } from "../utils/interface.ts";
 
 const Users: React.FC = () => {

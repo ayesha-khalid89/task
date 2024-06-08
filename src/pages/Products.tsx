@@ -2,7 +2,7 @@
 import React, { useContext } from "react";
 import DataTable from "../components/DataTable.tsx";
 import { AppContext } from "../context/AppContext.tsx";
-import { Product } from "../types.ts"; // Import the Product type
+import { Product } from "../utils/interface.ts";
 import { IFilterKeys } from "../utils/interface.ts";
 
 const Products: React.FC = () => {
