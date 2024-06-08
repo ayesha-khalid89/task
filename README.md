@@ -16,7 +16,7 @@ The page will reload when you make changes.\
 - **Pagination**: Pagination handled on all data and filtered data.
 - **Filteration**: Filteration added on multiple fields.
 - **Search**: Search items irrespective of any field.
-- **Context API**: Stored users and products data using context API.
+- **Context API**: Stored users and products data using context API. Used to store the page size value w.r.t user and product page. Like if user prefers to see 10 entries for Users and 20 for products
 - **Axios**: Used axios to fetch data from https://dummyjson.com/.
 
 ## Images
