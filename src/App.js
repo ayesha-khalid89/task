@@ -8,7 +8,6 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Header />
         <Routes>
           <Route path="/" element={<Users />} />
           <Route path="/users" element={<Users />} />

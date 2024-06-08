@@ -3,6 +3,7 @@ export interface User {
     id: number;
     firstName: string;
     lastName: string;
+    maidenName:string;
     birthDate: string;
     gender: string;
     email: string;
@@ -10,7 +11,9 @@ export interface User {
     image: string;
     username: string;
     password: string;
-    university: string;
+    height: string;
+    bloodGroup:string;
+    eyeColor:string;
   }
   
   export interface Product {
@@ -19,5 +22,12 @@ export interface User {
     brand: string;
     category: string;
     price: number;
+    discountPercentage:number;
+    rating:number;
+    stock:number;
+    weight:number;
+    warrantyInformation:string;
+    availabilityStatus:string;
+    shippingInformation:string;
   }
   

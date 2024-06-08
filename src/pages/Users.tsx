@@ -13,12 +13,15 @@ const Users: React.FC = () => {
     { header: "ID", accessor: "id" },
     { header: "First Name", accessor: "firstName" },
     { header: "Last Name", accessor: "lastName" },
+    { header: "Maiden Name", accessor: "maidenName" },
     { header: "Birth Date", accessor: "birthDate" },
     { header: "Gender", accessor: "gender" },
     { header: "Email", accessor: "email" },
     { header: "Phone", accessor: "phone" },
     { header: "Username", accessor: "username" },
-    { header: "University", accessor: "university" },
+    { header: "Height", accessor: "height" },
+    { header: "Blood Group", accessor: "bloodGroup" },
+    { header: "Eye Color", accessor: "eyeColor" },
   ];
 
   const filterKeys: IFilterKeys[] = [
@@ -35,7 +38,6 @@ const Users: React.FC = () => {
 
   return (
     <div>
-      <h1>Users</h1>
       <DataTable<User>
         columns={columns}
         fetchUrl="https://dummyjson.com/users"

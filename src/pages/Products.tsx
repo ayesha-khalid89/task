@@ -15,6 +15,13 @@ const Products: React.FC = () => {
     { header: "Brand", accessor: "brand" },
     { header: "Category", accessor: "category" },
     { header: "Price", accessor: "price" },
+    { header: "Discount Percentage", accessor: "discountPercentage" },
+    { header: "Rating", accessor: "rating" },
+    { header: "Stock", accessor: "stock" },
+    { header: "Weight", accessor: "weight" },
+    { header: "Warranty Information", accessor: "warrantyInformation" },
+    { header: "Availability Status", accessor: "availabilityStatus" },
+    { header: "Shipping Information", accessor: "shippingInformation" },
   ];
 
   const filterKeys: IFilterKeys[] = [
@@ -30,7 +37,6 @@ const Products: React.FC = () => {
 
   return (
     <div>
-      <h1>Products</h1>
       <DataTable<Product>
         columns={columns}
         fetchUrl="https://dummyjson.com/products"

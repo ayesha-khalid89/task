@@ -3,6 +3,7 @@ import axios from "axios";
 import { CiSearch } from "react-icons/ci";
 import { MdCancel } from "react-icons/md";
 import { IFilterKeys } from "../utils/interface.ts";
+import { Link } from "react-router-dom";
 
 interface DataTableProps<T> {
   columns: { header: string; accessor: keyof T }[];
@@ -32,22 +33,82 @@ function DataTable<T extends { [key: string]: any }>({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filteredLength, setFilteredLength] = useState(0);
+  const [searchClicked, setSearchClicked] = useState(false);
   const searchRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
 
+  const generateUrl = () => {
+    let url = fetchUrl;
+    if (
+      searchRef.current?.value &&
+      !searchRef.current?.value.includes("Select ")
+    ) {
+      console.log(searchRef.current.value);
+      let value = "";
+      if (selectedFilter?.type === "date" && searchRef.current) {
+        const date = new Date(searchRef.current.value);
+        value = `${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()}`;
+      } else if (searchRef.current) {
+        value = searchRef.current.value;
+      }
+      if (value === `Select ${selectedFilter?.key}` && searchRef.current) {
+        value = "";
+      }
+      if (dataType === "users") {
+        url = `${fetchUrl}/filter?key=${selectedFilter?.key}&value=${value}`;
+      } else {
+        if (selectedFilter?.key === "category") {
+          if (value === "All") {
+            url = fetchUrl;
+          } else {
+            url = `${fetchUrl}/category/laptops`;
+          }
+        } else {
+          url = `${fetchUrl}/search?q=${value}`;
+        }
+      }
+    }
+    return url;
+  };
+
   useEffect(() => {
+    const url = generateUrl();
+    console.log(url);
     axios
-      .get(fetchUrl, {
+      .get(url, {
         params: {
           limit: pageSize,
           skip: (currentPage - 1) * pageSize,
         },
       })
       .then((response) => {
-        setData(response.data[dataType]);
-        setDataState(response.data[dataType]);
-        if (totalData === 0) {
+        if (
+          selectedFilter?.key &&
+          searchRef?.current?.value &&
+          dataType === "products" &&
+          selectedFilter?.key !== "category"
+        ) {
+          const filteredProducts = response.data[dataType]
+            .map((item) => {
+              if (
+                selectedFilter?.key &&
+                item[selectedFilter?.key] &&
+                item[selectedFilter?.key].includes(searchRef.current?.value)
+              ) {
+                return item;
+              }
+            })
+            .filter((item) => item !== undefined);
+          setData(filteredProducts);
+          setTotalData(filteredProducts.length);
+          setDataState(filteredProducts || []);
+        } else {
+          setData(response.data[dataType]);
           setTotalData(response.data["total"]);
+          setDataState(response.data[dataType] || []);
         }
+        setSearchClicked(false);
         setLoading(false);
       })
       .catch((error) => {
@@ -56,7 +117,6 @@ function DataTable<T extends { [key: string]: any }>({
         setLoading(false);
       });
   }, [
-    fetchUrl,
     currentPage,
     pageSize,
     dataType,
@@ -64,6 +124,7 @@ function DataTable<T extends { [key: string]: any }>({
     totalData,
     setTotalData,
     selectedFilter,
+    searchClicked,
   ]);
 
   const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -89,6 +150,14 @@ function DataTable<T extends { [key: string]: any }>({
   const handleDeleteSearch = () => {
     setInputEnabled(false);
     setSearchQuery("");
+  };
+
+  const handleDeleteFilter = () => {
+    setSelectedFilter(undefined);
+    setFilteredLength(0);
+    if (searchRef.current) {
+      searchRef.current.value = "";
+    }
   };
 
   const handleFilterClick = (item: IFilterKeys) => {
@@ -137,65 +206,9 @@ function DataTable<T extends { [key: string]: any }>({
       );
     }
   };
-  const handleSearchClick = () => {
-    let value = "";
-    if (selectedFilter?.type === "date" && searchRef.current) {
-      const date = new Date(searchRef.current.value);
-      value = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-    } else if (searchRef.current) {
-      value = searchRef.current.value;
-    }
-    if (value === `Select ${selectedFilter?.key}` && searchRef.current) {
-      value = "";
-    }
-    let url = "";
-    if (dataType === "users") {
-      url = `${fetchUrl}/filter?key=${selectedFilter?.key}&value=${value}`;
-    } else {
-      if (selectedFilter?.key === "category") {
-        if (value === "All") {
-          url = fetchUrl;
-        } else {
-          url = `${fetchUrl}/category/laptops`;
-        }
-      } else {
-        url = `${fetchUrl}/search?q=${value}`;
-      }
-    }
-    if (selectedFilter?.key && value) {
-      axios
-        .get(url, {
-          params: {
-            limit: pageSize,
-            skip: (currentPage - 1) * pageSize,
-          },
-        })
-        .then((response) => {
-          if (dataType === "products" && selectedFilter.key !== "category") {
-            const filteredProducts = response.data[dataType]
-              .map((item) => {
-                if (item[selectedFilter.key].includes(value)) {
-                  return item;
-                }
-              })
-              .filter((item) => item !== undefined);
-            setData(filteredProducts);
-            setFilteredLength(filteredProducts.length);
-            setDataState(filteredProducts || []);
-          } else {
-            setData(response.data[dataType]);
-            setFilteredLength(response.data["total"]);
-            setDataState(response.data[dataType] || []);
-          }
 
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          setError("Error fetching data");
-          setLoading(false);
-        });
-    }
+  const handleSearchClick = () => {
+    setSearchClicked(true);
   };
 
   const totalPages = filteredLength > 0 ? 1 : Math.ceil(totalData / pageSize);
@@ -249,22 +262,41 @@ function DataTable<T extends { [key: string]: any }>({
 
   return (
     <div>
+      <div className="header">
+        <Link to="/users">
+          <button
+            onClick={() => {
+              setCurrentPage(1);
+              setSelectedFilter(undefined);
+            }}
+          >
+            Users
+          </button>
+        </Link>
+        <Link to="/products">
+          <button
+            onClick={() => {
+              setCurrentPage(1);
+              setSelectedFilter(undefined);
+            }}
+          >
+            Products
+          </button>
+        </Link>
+      </div>
+      <h2>{dataType.toUpperCase()}</h2>
       <div className="section-filter">
         <div>
-          {filteredLength < 1 ? (
-            <select
-              className="select-entries"
-              value={pageSize}
-              onChange={handlePageSizeChange}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-          ) : (
-            `${filteredLength} `
-          )}
+          <select
+            className="select-entries"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
           Entries
         </div>
         <div>
@@ -309,6 +341,7 @@ function DataTable<T extends { [key: string]: any }>({
             <button className="search-button" onClick={handleSearchClick}>
               Search
             </button>
+            <MdCancel onClick={handleDeleteFilter} />
           </>
         )}
       </div>
