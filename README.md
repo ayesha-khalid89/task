@@ -1,70 +1,28 @@
-# Getting Started with Create React App
+# React App for Datatable
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
+## Scripts to run Project
 
 In the project directory, you can run:
-
+### `npm install`
 ### `npm start`
 
-Runs the app in the development mode.\
+Run the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+## Feature Implementation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Pagination**: Pagination handled on all data and filtered data.
+- **Filteration**: Filteration added on multiple fields.
+- **Search**: Search items irrespective of any field.
+- **Context API**: Stored users and products data using context API.
+- **Axios**: Used axios to fetch data from https://dummyjson.com/.
 
-### `npm run build`
+## Images
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![name-filter](https://github.com/ayesha-khalid89/task/assets/159626121/600ecb5d-a4a3-43b6-bfc5-b6f7ee49ac8b)
+![gender-filter](https://github.com/ayesha-khalid89/task/assets/159626121/dad04b75-e37c-4b5a-881a-3f7335dcc5a6)
+![date-filter](https://github.com/ayesha-khalid89/task/assets/159626121/41ed8019-33df-4dd0-95c9-440c10bbfc91)
+![Users](https://github.com/ayesha-khalid89/task/assets/159626121/55b2390f-9ca8-4145-a512-f4bc3dc4c4d3)
+![product-filter](https://github.com/ayesha-khalid89/task/assets/159626121/f009ad58-0e0b-4192-8ce5-0c96da54684b)
